@@ -1,26 +1,77 @@
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateSubCompanyDto } from './dto/create-sub-company.dto';
 import { UpdateSubCompanyDto } from './dto/update-sub-company.dto';
+import { SubCompany } from './entities/sub-company.entity';
+import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+import { PaginationDto } from 'src/common/dtos/pagination.dto';
 
 @Injectable()
 export class SubCompanyService {
-  create(createSubCompanyDto: CreateSubCompanyDto) {
-    return 'This action adds a new subCompany';
+  constructor(
+    @InjectRepository(SubCompany)
+    private readonly companyRepository: Repository<SubCompany>,
+  ) {}
+
+  async create(createSubCompanyDto: CreateSubCompanyDto) {
+    try {
+      const company = this.companyRepository.create(createSubCompanyDto);
+      await this.companyRepository.save(company);
+
+      return company;
+    } catch (error) {
+      console.log(error);
+      throw new InternalServerErrorException('Error');
+    }
   }
 
-  findAll() {
-    return `This action returns all subCompany`;
+  async findAll(paginationDto: PaginationDto) {
+    const { limit = 10, offset = 0 } = paginationDto;
+    console.log(limit);
+    const companies = await this.companyRepository.find({
+      take: limit,
+      skip: offset,
+    });
+
+    return companies;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} subCompany`;
+  async findOne(term: string) {
+    const company = await this.findOne(term);
+    return {
+      ...company,
+    };
   }
 
-  update(id: number, updateSubCompanyDto: UpdateSubCompanyDto) {
-    return `This action updates a #${id} subCompany`;
+  async update(id: string, updateSubCompanyDto: UpdateSubCompanyDto) {
+    const company = await this.companyRepository.findOne({
+      where: { id_participacion_empresa: id },
+    });
+
+    if (!company)
+      throw new NotFoundException(`Product with id: ${id} not Found`);
+
+    const companyUpdate = { ...company, ...updateSubCompanyDto };
+
+    const updatedData = await this.companyRepository.save(companyUpdate);
+
+    return updatedData;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} subCompany`;
+  async remove(id: string) {
+    const company = await this.companyRepository.findOne({
+      where: { id_participacion_empresa: id },
+    });
+
+    if (!company)
+      throw new NotFoundException(`Product with id: ${id} not Found`);
+
+    await this.companyRepository.remove(company);
+
+    return company;
   }
 }

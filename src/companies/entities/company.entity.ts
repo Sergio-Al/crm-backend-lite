@@ -1,4 +1,6 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { SubCompany } from 'src/sub-company/entities/sub-company.entity';
+import { User } from 'src/users/entities/user.entity';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class Company {
@@ -34,4 +36,10 @@ export class Company {
 
   @Column('text', { nullable: true })
   identificacion_fiscal_c;
+
+  @OneToMany(() => SubCompany, (subCompany) => subCompany.parentCompany)
+  subCompanies: SubCompany[];
+
+  @OneToMany(() => User, (user) => user.company)
+  users: User[];
 }

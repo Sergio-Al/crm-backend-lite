@@ -1,7 +1,17 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Query,
+} from '@nestjs/common';
 import { SubCompanyService } from './sub-company.service';
 import { CreateSubCompanyDto } from './dto/create-sub-company.dto';
 import { UpdateSubCompanyDto } from './dto/update-sub-company.dto';
+import { PaginationDto } from 'src/common/dtos/pagination.dto';
 
 @Controller('sub-company')
 export class SubCompanyController {
@@ -13,22 +23,25 @@ export class SubCompanyController {
   }
 
   @Get()
-  findAll() {
-    return this.subCompanyService.findAll();
+  findAll(@Query() paginationDto: PaginationDto) {
+    return this.subCompanyService.findAll(paginationDto);
   }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.subCompanyService.findOne(+id);
+    return this.subCompanyService.findOne(id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateSubCompanyDto: UpdateSubCompanyDto) {
-    return this.subCompanyService.update(+id, updateSubCompanyDto);
+  update(
+    @Param('id') id: string,
+    @Body() updateSubCompanyDto: UpdateSubCompanyDto,
+  ) {
+    return this.subCompanyService.update(id, updateSubCompanyDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.subCompanyService.remove(+id);
+    return this.subCompanyService.remove(id);
   }
 }
