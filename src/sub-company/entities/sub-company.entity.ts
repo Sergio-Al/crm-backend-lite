@@ -12,7 +12,7 @@ import { User } from 'src/users/entities/user.entity';
 @Entity()
 export class SubCompany {
   @PrimaryGeneratedColumn('uuid')
-  id_participacion_empresa: string;
+  id: string;
 
   @Column('text')
   name: string;

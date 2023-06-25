@@ -28,7 +28,7 @@ export class UsersService {
 
       if (!!companyIdEmpresa) {
         const company = await this.companyRepository.findOne({
-          where: { id_empresa: companyIdEmpresa },
+          where: { id: companyIdEmpresa },
         });
 
         if (!company) throw new NotFoundException(`company not Found`);
@@ -58,7 +58,7 @@ export class UsersService {
 
   async findOne(term: string) {
     const company = await this.userRepository.findOne({
-      where: { id_usuario: term },
+      where: { id: term },
     });
     return {
       ...company,
@@ -67,7 +67,7 @@ export class UsersService {
 
   async update(id: string, updateUserDto: UpdateUserDto) {
     const user = await this.userRepository.findOne({
-      where: { id_usuario: id },
+      where: { id: id },
     });
 
     if (!user) throw new NotFoundException(`Product with id: ${id} not Found`);
@@ -81,7 +81,7 @@ export class UsersService {
 
   async remove(id: string) {
     const user = await this.userRepository.findOne({
-      where: { id_usuario: id },
+      where: { id: id },
     });
 
     if (!user) throw new NotFoundException(`Product with id: ${id} not Found`);

@@ -7,21 +7,21 @@ export class CreateUserDto {
 
   @IsString()
   @IsOptional()
-  last_name: string;
+  last_name?: string;
 
   @IsString()
   @IsOptional()
-  iddivision_c: string;
+  iddivision_c?: string;
 
   @IsString()
   @IsOptional()
-  idregional_c: string;
+  idregional_c?: string;
 
   @IsString()
   @IsOptional()
-  idamercado_c: string;
+  idamercado_c?: string;
 
   @IsString()
   @IsOptional()
-  companyIdEmpresa: string;
+  companyIdEmpresa?: string;
 }

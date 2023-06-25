@@ -40,4 +40,12 @@ export class CreateCompanyDto {
   @IsString()
   @IsOptional()
   identificacion_fiscal_c: string;
+
+  @IsString()
+  @IsOptional()
+  assigned_user: string;
+
+  @IsString()
+  @IsOptional()
+  comment: string;
 }

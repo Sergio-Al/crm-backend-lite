@@ -5,7 +5,7 @@ import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 @Entity()
 export class Company {
   @PrimaryGeneratedColumn('uuid')
-  id_empresa: string;
+  id: string;
 
   @Column('text')
   name: string;
@@ -36,6 +36,12 @@ export class Company {
 
   @Column('text', { nullable: true })
   identificacion_fiscal_c;
+
+  @Column('text', { nullable: true })
+  assigned_user: string;
+
+  @Column('text', { nullable: true })
+  comment: string;
 
   @OneToMany(() => SubCompany, (subCompany) => subCompany.parentCompany)
   subCompanies: SubCompany[];

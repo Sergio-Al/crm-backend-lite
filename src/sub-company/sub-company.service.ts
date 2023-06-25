@@ -27,7 +27,7 @@ export class SubCompanyService {
 
       if (!!parentCompanyIdEmpresa) {
         const parentCompany = await this.parentCompanyRepository.findOne({
-          where: { id_empresa: parentCompanyIdEmpresa },
+          where: { id: parentCompanyIdEmpresa },
         });
 
         if (!parentCompany) throw new NotFoundException(`company not Found`);
@@ -56,7 +56,7 @@ export class SubCompanyService {
 
   async findOne(term: string) {
     const company = await this.companyRepository.findOne({
-      where: { id_participacion_empresa: term },
+      where: { id: term },
     });
     return {
       ...company,
@@ -65,7 +65,7 @@ export class SubCompanyService {
 
   async update(id: string, updateSubCompanyDto: UpdateSubCompanyDto) {
     const company = await this.companyRepository.findOne({
-      where: { id_participacion_empresa: id },
+      where: { id: id },
     });
 
     if (!company)
@@ -80,7 +80,7 @@ export class SubCompanyService {
 
   async remove(id: string) {
     const company = await this.companyRepository.findOne({
-      where: { id_participacion_empresa: id },
+      where: { id: id },
     });
 
     if (!company)

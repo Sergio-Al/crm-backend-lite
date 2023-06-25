@@ -41,7 +41,9 @@ export class CompaniesService {
   }
 
   async findOne(term: string) {
-    const company = await this.findOne(term);
+    const company = await this.companyRepository.findOne({
+      where: { id: term },
+    });
     return {
       ...company,
     };
@@ -49,7 +51,7 @@ export class CompaniesService {
 
   async update(id: string, updateCompanyDto: UpdateCompanyDto) {
     const company = await this.companyRepository.findOne({
-      where: { id_empresa: id },
+      where: { id: id },
     });
 
     if (!company)
@@ -64,7 +66,7 @@ export class CompaniesService {
 
   async remove(id: string) {
     const company = await this.companyRepository.findOne({
-      where: { id_empresa: id },
+      where: { id: id },
     });
 
     if (!company)
