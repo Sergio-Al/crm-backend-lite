@@ -13,6 +13,9 @@ export class User {
   last_name;
 
   @Column('text', { nullable: true })
+  full_name: string;
+
+  @Column('text', { nullable: true })
   iddivision_c;
 
   @Column('text', { nullable: true })

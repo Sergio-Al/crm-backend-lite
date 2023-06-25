@@ -1,18 +1,23 @@
 import {
+  BadRequestException,
   Injectable,
   InternalServerErrorException,
+  Logger,
   NotFoundException,
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Like, Repository } from 'typeorm';
 import { PaginationDto } from 'src/common/dtos/pagination.dto';
 import { Company } from 'src/companies/entities/company.entity';
+import { QueryUser } from './dto/query-user.dto';
 
 @Injectable()
 export class UsersService {
+  private readonly logger = new Logger('ProductsService');
+
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
@@ -22,7 +27,7 @@ export class UsersService {
 
   async create(createUserDto: CreateUserDto) {
     try {
-      const { companyIdEmpresa } = createUserDto;
+      const { companyIdEmpresa, first_name, last_name } = createUserDto;
 
       const user = this.userRepository.create(createUserDto);
 
@@ -35,6 +40,9 @@ export class UsersService {
 
         user.company = company;
       }
+
+      // additions
+      user.full_name = `${first_name} ${last_name}`;
 
       await this.userRepository.save(user);
 
@@ -65,6 +73,37 @@ export class UsersService {
     };
   }
 
+  async findByTerm(terms: QueryUser) {
+    const params: any = {};
+
+    if (terms.company_id) params.company = { id: terms.company_id };
+    if (terms.idamercado_c) params.idamercado_c = terms.idamercado_c;
+    if (terms.iddivision_c) params.iddivision_c = terms.iddivision_c;
+    if (terms.idregional_c) params.idregional_c = terms.idregional_c;
+    if (terms.name) params.full_name = Like(`%${terms.name}%`);
+
+    const users = await this.userRepository.find({
+      relations: {
+        company: true,
+      },
+      where: params,
+    });
+
+    // if (terms.name) {
+    //   const filteredByName = await this.userRepository.find({
+    //     relations: {
+    //       company: true,
+    //     },
+    //     where: {
+    //       full_name: Like(`%{terms.name}%`),
+    //     },
+    //   });
+    //   users.push(...filteredByName);
+    // }
+
+    return users;
+  }
+
   async update(id: string, updateUserDto: UpdateUserDto) {
     const user = await this.userRepository.findOne({
       where: { id: id },
@@ -89,5 +128,24 @@ export class UsersService {
     await this.userRepository.remove(user);
 
     return user;
+  }
+
+  async removeAllUsers() {
+    const query = this.userRepository.createQueryBuilder('user');
+
+    try {
+      return await query.delete().where({}).execute();
+    } catch (error) {
+      this.handleDBExceptions(error);
+    }
+  }
+
+  private handleDBExceptions(error: any) {
+    console.log(error);
+    if (error.code === '23505') throw new BadRequestException(error.detail);
+    this.logger.error(error);
+    throw new InternalServerErrorException(
+      'Unexpected Error. check server logs',
+    );
   }
 }
