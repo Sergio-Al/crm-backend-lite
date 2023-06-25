@@ -9,17 +9,31 @@ import { SubCompany } from './entities/sub-company.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PaginationDto } from 'src/common/dtos/pagination.dto';
+import { Company } from 'src/companies/entities/company.entity';
 
 @Injectable()
 export class SubCompanyService {
   constructor(
     @InjectRepository(SubCompany)
     private readonly companyRepository: Repository<SubCompany>,
+    @InjectRepository(Company)
+    private readonly parentCompanyRepository: Repository<Company>,
   ) {}
 
   async create(createSubCompanyDto: CreateSubCompanyDto) {
     try {
+      const { parentCompanyIdEmpresa } = createSubCompanyDto;
       const company = this.companyRepository.create(createSubCompanyDto);
+
+      if (!!parentCompanyIdEmpresa) {
+        const parentCompany = await this.parentCompanyRepository.findOne({
+          where: { id_empresa: parentCompanyIdEmpresa },
+        });
+
+        if (!parentCompany) throw new NotFoundException(`company not Found`);
+
+        company.parentCompany = parentCompany;
+      }
       await this.companyRepository.save(company);
 
       return company;
@@ -41,7 +55,9 @@ export class SubCompanyService {
   }
 
   async findOne(term: string) {
-    const company = await this.findOne(term);
+    const company = await this.companyRepository.findOne({
+      where: { id_participacion_empresa: term },
+    });
     return {
       ...company,
     };

@@ -44,7 +44,7 @@ export class SubCompany {
   @Column('text', { nullable: true })
   identificacion_fiscal_c;
 
-  @ManyToOne(() => Company, (company) => company.subCompanies)
+  @ManyToOne(() => Company, (company) => company.subCompanies, { eager: true })
   parentCompany;
 
   @ManyToMany(() => User)
