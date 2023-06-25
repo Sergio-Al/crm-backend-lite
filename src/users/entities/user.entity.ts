@@ -21,6 +21,6 @@ export class User {
   @Column('text', { nullable: true })
   idamercado_c;
 
-  @ManyToOne(() => Company, (subCompany) => subCompany.users)
+  @ManyToOne(() => Company, (subCompany) => subCompany.users, { eager: true })
   company: Company;
 }

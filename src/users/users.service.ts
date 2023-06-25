@@ -9,17 +9,33 @@ import { User } from './entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { PaginationDto } from 'src/common/dtos/pagination.dto';
+import { Company } from 'src/companies/entities/company.entity';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    @InjectRepository(Company)
+    private readonly companyRepository: Repository<Company>,
   ) {}
 
   async create(createUserDto: CreateUserDto) {
     try {
+      const { companyIdEmpresa } = createUserDto;
+
       const user = this.userRepository.create(createUserDto);
+
+      if (!!companyIdEmpresa) {
+        const company = await this.companyRepository.findOne({
+          where: { id_empresa: companyIdEmpresa },
+        });
+
+        if (!company) throw new NotFoundException(`company not Found`);
+
+        user.company = company;
+      }
+
       await this.userRepository.save(user);
 
       return user;
@@ -41,7 +57,9 @@ export class UsersService {
   }
 
   async findOne(term: string) {
-    const company = await this.findOne(term);
+    const company = await this.userRepository.findOne({
+      where: { id_usuario: term },
+    });
     return {
       ...company,
     };
