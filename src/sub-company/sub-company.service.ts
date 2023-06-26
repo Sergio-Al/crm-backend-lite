@@ -54,6 +54,17 @@ export class SubCompanyService {
     return companies;
   }
 
+  // async findCompany(paginationDto: PaginationDto) {
+  //   const { limit = 10, offset = 0 } = paginationDto;
+  //   console.log(limit);
+  //   const companies = await this.companyRepository.find({
+  //     take: limit,
+  //     skip: offset,
+  //   });
+
+  //   return companies;
+  // }
+
   async findOne(term: string) {
     const company = await this.companyRepository.findOne({
       where: { id: term },
