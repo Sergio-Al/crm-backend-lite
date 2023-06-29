@@ -22,12 +22,12 @@ export class SubCompanyService {
 
   async create(createSubCompanyDto: CreateSubCompanyDto) {
     try {
-      const { parentCompanyIdEmpresa } = createSubCompanyDto;
+      const { hance_empresa_id_c } = createSubCompanyDto;
       const company = this.companyRepository.create(createSubCompanyDto);
 
-      if (!!parentCompanyIdEmpresa) {
+      if (!!hance_empresa_id_c) {
         const parentCompany = await this.parentCompanyRepository.findOne({
-          where: { id: parentCompanyIdEmpresa },
+          where: { id: hance_empresa_id_c },
         });
 
         if (!parentCompany) throw new NotFoundException(`company not Found`);
@@ -41,6 +41,14 @@ export class SubCompanyService {
       console.log(error);
       throw new InternalServerErrorException('Error');
     }
+  }
+
+  async findByParent(id: string) {
+    const response = await this.companyRepository.find({
+      where: { parentCompany: { id: id } },
+    });
+
+    return response;
   }
 
   async findAll(paginationDto: PaginationDto) {

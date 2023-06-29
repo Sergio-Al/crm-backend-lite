@@ -43,7 +43,7 @@ export class CreateCompanyDto {
 
   @IsString()
   @IsOptional()
-  assigned_user: string;
+  assigned_user_id: string;
 
   @IsString()
   @IsOptional()

@@ -43,5 +43,9 @@ export class CreateSubCompanyDto {
 
   @IsString()
   @IsOptional()
-  parentCompanyIdEmpresa: string;
+  assigned_user_id: string;
+
+  @IsString()
+  @IsOptional()
+  hance_empresa_id_c: string;
 }

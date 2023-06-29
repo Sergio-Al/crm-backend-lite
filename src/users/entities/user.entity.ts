@@ -13,7 +13,7 @@ export class User {
   last_name;
 
   @Column('text', { nullable: true })
-  full_name: string;
+  fullname: string;
 
   @Column('text', { nullable: true })
   iddivision_c;

@@ -14,7 +14,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { PaginationDto } from 'src/common/dtos/pagination.dto';
 import { QueryUser } from './dto/query-user.dto';
 
-@Controller('users')
+@Controller('user')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 

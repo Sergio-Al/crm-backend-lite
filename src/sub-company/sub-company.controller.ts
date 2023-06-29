@@ -13,7 +13,7 @@ import { CreateSubCompanyDto } from './dto/create-sub-company.dto';
 import { UpdateSubCompanyDto } from './dto/update-sub-company.dto';
 import { PaginationDto } from 'src/common/dtos/pagination.dto';
 
-@Controller('sub-company')
+@Controller('participacion')
 export class SubCompanyController {
   constructor(private readonly subCompanyService: SubCompanyService) {}
 
@@ -27,7 +27,12 @@ export class SubCompanyController {
     return this.subCompanyService.findAll(paginationDto);
   }
 
-  @Get(':id')
+  @Get('parent/:id')
+  findByParent(@Param('id') parentId: string) {
+    return this.subCompanyService.findByParent(parentId);
+  }
+
+  @Get('child/:id')
   findOne(@Param('id') id: string) {
     return this.subCompanyService.findOne(id);
   }

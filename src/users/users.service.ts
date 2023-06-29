@@ -42,7 +42,8 @@ export class UsersService {
       }
 
       // additions
-      user.full_name = `${first_name} ${last_name}`;
+      console.log(`${first_name} and ${last_name}`);
+      user.fullname = `${first_name} ${last_name}`;
 
       await this.userRepository.save(user);
 
@@ -80,7 +81,7 @@ export class UsersService {
     if (terms.idamercado_c) params.idamercado_c = terms.idamercado_c;
     if (terms.iddivision_c) params.iddivision_c = terms.iddivision_c;
     if (terms.idregional_c) params.idregional_c = terms.idregional_c;
-    if (terms.name) params.full_name = Like(`%${terms.name}%`);
+    if (terms.name) params.fullname = Like(`%${terms.name}%`);
 
     const users = await this.userRepository.find({
       relations: {

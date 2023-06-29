@@ -13,7 +13,7 @@ import { CreateCompanyDto } from './dto/create-company.dto';
 import { UpdateCompanyDto } from './dto/update-company.dto';
 import { PaginationDto } from 'src/common/dtos/pagination.dto';
 
-@Controller('companies')
+@Controller('empresas')
 export class CompaniesController {
   constructor(private readonly companiesService: CompaniesService) {}
 

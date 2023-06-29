@@ -44,6 +44,12 @@ export class SubCompany {
   @Column('text', { nullable: true })
   identificacion_fiscal_c;
 
+  @Column('text', { nullable: true })
+  hance_empresa_id_c;
+
+  @Column('text', { nullable: true })
+  assigned_user_id: string;
+
   @ManyToOne(() => Company, (company) => company.subCompanies, { eager: true })
   parentCompany;
 

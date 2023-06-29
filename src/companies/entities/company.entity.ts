@@ -38,7 +38,7 @@ export class Company {
   identificacion_fiscal_c;
 
   @Column('text', { nullable: true })
-  assigned_user: string;
+  assigned_user_id: string;
 
   @Column('text', { nullable: true })
   comment: string;
