@@ -1,4 +1,4 @@
-import { IsOptional, IsString, MinLength } from 'class-validator';
+import { IsArray, IsOptional, IsString, MinLength } from 'class-validator';
 
 export class CreateSubCompanyDto {
   @IsString()
@@ -48,4 +48,8 @@ export class CreateSubCompanyDto {
   @IsString()
   @IsOptional()
   hance_empresa_id_c: string;
+
+  @IsString({ each: true })
+  @IsOptional()
+  usersId?: string[];
 }

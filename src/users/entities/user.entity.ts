@@ -24,6 +24,12 @@ export class User {
   @Column('text', { nullable: true })
   idamercado_c;
 
+  @Column('text', { nullable: true })
+  email?: string;
+
+  @Column('text', { nullable: true })
+  assignment?: string;
+
   @ManyToOne(() => Company, (subCompany) => subCompany.users, { eager: true })
   company: Company;
 }

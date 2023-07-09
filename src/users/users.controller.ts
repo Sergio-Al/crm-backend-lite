@@ -49,6 +49,14 @@ export class UsersController {
     return this.usersService.update(id, updateUserDto);
   }
 
+  @Patch('multiple/:ids')
+  massiveUpdate(
+    @Param('ids') ids: string,
+    @Body() updateUserDto: UpdateUserDto,
+  ) {
+    return this.usersService.massiveUpdate(ids, updateUserDto);
+  }
+
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.usersService.remove(id);

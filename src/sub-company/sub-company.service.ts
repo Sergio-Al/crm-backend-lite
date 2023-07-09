@@ -22,7 +22,7 @@ export class SubCompanyService {
 
   async create(createSubCompanyDto: CreateSubCompanyDto) {
     try {
-      const { hance_empresa_id_c } = createSubCompanyDto;
+      const { hance_empresa_id_c, usersId } = createSubCompanyDto;
       const company = this.companyRepository.create(createSubCompanyDto);
 
       if (!!hance_empresa_id_c) {
@@ -34,6 +34,7 @@ export class SubCompanyService {
 
         company.parentCompany = parentCompany;
       }
+
       await this.companyRepository.save(company);
 
       return company;
@@ -53,10 +54,12 @@ export class SubCompanyService {
 
   async findAll(paginationDto: PaginationDto) {
     const { limit = 10, offset = 0 } = paginationDto;
-    console.log(limit);
     const companies = await this.companyRepository.find({
       take: limit,
       skip: offset,
+      relations: {
+        users: true,
+      },
     });
 
     return companies;

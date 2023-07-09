@@ -11,8 +11,8 @@ import { User } from './entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Like, Repository } from 'typeorm';
 import { PaginationDto } from 'src/common/dtos/pagination.dto';
-import { Company } from 'src/companies/entities/company.entity';
 import { QueryUser } from './dto/query-user.dto';
+import { CompaniesService } from 'src/companies/companies.service';
 
 @Injectable()
 export class UsersService {
@@ -21,8 +21,7 @@ export class UsersService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
-    @InjectRepository(Company)
-    private readonly companyRepository: Repository<Company>,
+    private readonly companiesService: CompaniesService,
   ) {}
 
   async create(createUserDto: CreateUserDto) {
@@ -32,10 +31,7 @@ export class UsersService {
       const user = this.userRepository.create(createUserDto);
 
       if (!!companyIdEmpresa) {
-        const company = await this.companyRepository.findOne({
-          where: { id: companyIdEmpresa },
-        });
-
+        const company = await this.companiesService.findOne(companyIdEmpresa);
         if (!company) throw new NotFoundException(`company not Found`);
 
         user.company = company;
@@ -102,7 +98,13 @@ export class UsersService {
     //   users.push(...filteredByName);
     // }
 
-    return users;
+    return users.map((user) => ({
+      ...user,
+      user_name: user.fullname,
+      cargo: user.assignment,
+      division: user.iddivision_c,
+      a_mercado: user.idamercado_c,
+    }));
   }
 
   async update(id: string, updateUserDto: UpdateUserDto) {
@@ -110,9 +112,31 @@ export class UsersService {
       where: { id: id },
     });
 
-    if (!user) throw new NotFoundException(`Product with id: ${id} not Found`);
-
     const userUpdate = { ...user, ...updateUserDto };
+
+    if (
+      !!updateUserDto.companyIdEmpresa &&
+      updateUserDto.companyIdEmpresa !== '-1'
+    ) {
+      const company = await this.companiesService.findOne(
+        updateUserDto.companyIdEmpresa,
+      );
+
+      if (!company)
+        throw new NotFoundException(
+          `Company with id: ${updateUserDto.companyIdEmpresa} no found`,
+        );
+
+      userUpdate.company = company;
+    } else if (updateUserDto.companyIdEmpresa === '-1') {
+      await this.companiesService.update(user.company.id, {
+        removeUserId: user.id,
+      });
+
+      userUpdate.company = null;
+    }
+
+    if (!user) throw new NotFoundException(`Product with id: ${id} not Found`);
 
     const updatedData = await this.userRepository.save(userUpdate);
 
@@ -129,6 +153,23 @@ export class UsersService {
     await this.userRepository.remove(user);
 
     return user;
+  }
+
+  async massiveUpdate(ids: string, udpateUserDto: UpdateUserDto) {
+    const userIds = ids.split(',');
+    const users: User[] = [];
+
+    try {
+      for await (const userId of userIds) {
+        const userUpdated = await this.update(userId, udpateUserDto);
+        users.push(userUpdated);
+      }
+
+      // return `users with Id ${ids.split(',')} updated`;
+      return users;
+    } catch (error) {
+      throw new InternalServerErrorException('Error');
+    }
   }
 
   async removeAllUsers() {
